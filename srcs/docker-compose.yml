@@ -1,0 +1,72 @@
+services:
+  # MariaDB service configuration
+  mariadb:
+    image: mariadb:user  # Custom MariaDB image
+    container_name: mariadb  # Name of the container
+    build: ./requirements/mariadb  # Build path for MariaDB Dockerfile
+    volumes:
+      - mariadb:/var/lib/mysql  # Mounting MariaDB data to persistent volume
+    env_file:
+      - .env  # Environment variables for the container
+    networks:
+      - inception  # Attach container to 'inception' network
+    restart: always  # Restart policy for the container
+    healthcheck:
+      test: ["CMD", "nc", "-zv", "mariadb", "3306"]  # Test to check if MariaDB is up and running
+      interval: 1s  # Interval between health check tests
+      timeout: 5s  # Timeout for the health check
+      retries: 10  # Number of retries before marking the service as unhealthy
+
+  # Nginx service configuration
+  nginx:
+    image: nginx:user  # Custom Nginx image
+    container_name: nginx  # Name of the container
+    build: ./requirements/nginx  # Build path for Nginx Dockerfile
+    ports:
+      - "443:443"  # Exposing port 443 for HTTPS traffic
+    depends_on:
+      - wordpress  # Nginx depends on WordPress service
+    volumes:
+      - wordpress:/var/www/wordpress  # Mount WordPress directory to Nginx container
+    networks:
+      - inception  # Attach container to 'inception' network
+    restart: always  # Restart policy for the container
+
+  # WordPress service configuration
+  wordpress:
+    image: wordpress:user  # Custom WordPress image
+    container_name: wordpress  # Name of the container
+    build: ./requirements/wordpress  # Build path for WordPress Dockerfile
+    depends_on:
+      mariadb:
+        condition: service_healthy  # WordPress depends on MariaDB being healthy
+    volumes:
+      - wordpress:/var/www/wordpress  # Mount WordPress data to persistent volume
+    env_file:
+      - .env  # Environment variables for the container
+    networks:
+      - inception  # Attach container to 'inception' network
+    restart: always  # Restart policy for the container
+
+# Volumes section - Define persistent data storage for MariaDB and WordPress
+volumes:
+  mariadb:
+    name: mariadb  # Volume name for MariaDB data
+    driver: local  # Use local driver for persistent storage
+    driver_opts:
+      device: /home/slazar/data/database  # Host path for MariaDB data
+      o: bind  # Bind mount option
+      type: none  # No type, just bind to the host path
+
+  wordpress:
+    name: wordpress  # Volume name for WordPress data
+    driver: local  # Use local driver for persistent storage
+    driver_opts:
+      device: /home/slazar/data/wordpress  # Host path for WordPress data
+      o: bind  # Bind mount option
+      type: none  # No type, just bind to the host path
+
+# Networks section - Define custom network for container communication
+networks:
+  inception:
+    name: inception  # Custom network name
