@@ -1,7 +1,7 @@
 services:
   # MariaDB service configuration
   mariadb:
-    image: mariadb:user  # Custom MariaDB image
+    image: mariadb  # Custom MariaDB image
     container_name: mariadb  # Name of the container
     build: ./requirements/mariadb  # Build path for MariaDB Dockerfile
     volumes:
@@ -19,7 +19,7 @@ services:
 
   # Nginx service configuration
   nginx:
-    image: nginx:user  # Custom Nginx image
+    image: nginx  # Custom Nginx image
     container_name: nginx  # Name of the container
     build: ./requirements/nginx  # Build path for Nginx Dockerfile
     ports:
@@ -34,7 +34,7 @@ services:
 
   # WordPress service configuration
   wordpress:
-    image: wordpress:user  # Custom WordPress image
+    image: wordpress  # Custom WordPress image
     container_name: wordpress  # Name of the container
     build: ./requirements/wordpress  # Build path for WordPress Dockerfile
     depends_on:
