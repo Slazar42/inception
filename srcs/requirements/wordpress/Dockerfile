@@ -10,10 +10,10 @@ RUN apt-get update && apt-get upgrade -y
 # - PHP (for WordPress execution)
 # - PHP-FPM (FastCGI Process Manager for PHP)
 # - MariaDB client (for database communication)
-# - Sendmail/msmtp (for sending emails from within the container)
+# - Sendmail (for sending emails from within the container)
 # - PHP MySQL extension (for WordPress to interact with MySQL/MariaDB)
 # - Curl (for making HTTP requests)
-RUN apt-get install -y php php7.4-fpm mariadb-client sendmail msmtp php-mysql curl
+RUN apt-get install -y php php7.4-fpm mariadb-client sendmail php-mysql curl
 
 # Copy the WordPress entrypoint script to the root directory inside the container
 COPY ./entrypoint.sh /
