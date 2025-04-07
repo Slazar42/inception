@@ -21,5 +21,7 @@ COPY ./entrypoint.sh /
 # Grant execute permission to the entrypoint script
 RUN chmod +x /entrypoint.sh
 
+EXPOSE 9000
+
 # Set the entrypoint for the container to run the custom script when it starts
 ENTRYPOINT ["/entrypoint.sh"]
